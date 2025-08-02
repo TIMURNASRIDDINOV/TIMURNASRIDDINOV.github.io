@@ -1,0 +1,323 @@
+/* Основные стили */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Permanent+Marker&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+  background-color: #121212;
+  color: #f5f5f5;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.form-header h1 {
+  font-size: 2.8rem;
+  color: #5655b1;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  font-family: "Permanent Marker", cursive;
+  letter-spacing: 1px;
+}
+
+.form-header p {
+  color: #aaa;
+  font-size: 1.1rem;
+}
+
+.back-to-main {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: #f5f5f5;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+  border: 1px solid #333;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.back-to-main:hover {
+  color: #5655b1;
+  text-decoration: underline;
+  background-color: rgba(86, 85, 177, 0.1);
+  border-color: #5655b1;
+}
+
+.customize-form {
+  background: #1a1a1a;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  border: 1px solid #333;
+}
+
+.form-section {
+  padding: 2.5rem;
+  border-bottom: 1px solid #333;
+}
+
+.form-section:last-child {
+  border-bottom: none;
+}
+
+.form-section h2 {
+  font-size: 1.5rem;
+  color: #f5f5f5;
+  margin-bottom: 2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-left: 3px solid #5655b1;
+  padding-left: 1rem;
+}
+
+/* Выбор товара */
+.product-selection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.product-option {
+  cursor: pointer;
+}
+
+.product-option input[type="radio"] {
+  display: none;
+}
+
+.product-card {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.product-option input[type="radio"]:checked + .product-card {
+  border-color: #5655b1;
+  background: rgba(86, 85, 177, 0.1);
+}
+
+.product-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.product-info h3 {
+  color: #f5f5f5;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.product-info p {
+  color: #aaa;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.product-info .price {
+  color: #5655b1;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* Опции */
+.option-group {
+  margin-bottom: 1.5rem;
+}
+
+.option-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #f5f5f5;
+  font-weight: 600;
+}
+
+.option-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #333;
+  background-color: #1a1a1a;
+  color: #f5f5f5;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.option-group select:focus {
+  outline: none;
+  border-color: #5655b1;
+}
+
+/* Загрузка файла */
+.file-upload-area {
+  border: 2px dashed #333;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.file-upload-area:hover {
+  border-color: #5655b1;
+  background-color: rgba(86, 85, 177, 0.05);
+}
+
+.file-upload-area.dragover {
+  border-color: #5655b1;
+  background-color: rgba(86, 85, 177, 0.1);
+}
+
+.upload-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #5655b1;
+}
+
+.upload-content p {
+  color: #aaa;
+  margin-bottom: 0.5rem;
+}
+
+.upload-link {
+  color: #5655b1;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Итоговая стоимость */
+.order-summary {
+  background: #1a1a1a;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  color: #aaa;
+}
+
+.summary-divider {
+  height: 1px;
+  background-color: #333;
+  margin: 1rem 0;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #5655b1;
+}
+
+/* Форма */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #f5f5f5;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #333;
+  background-color: #1a1a1a;
+  color: #f5f5f5;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #5655b1;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Кнопки */
+.form-actions {
+  padding: 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.btn {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn--primary {
+  background: #5655b1;
+  color: white;
+}
+
+.btn--primary:hover {
+  background: #4645a0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(86, 85, 177, 0.3);
+}
+
+.btn--secondary {
+  background: transparent;
+  color: #5655b1;
+  border: 2px solid #5655b1;
+}
+
+.btn--secondary:hover {
+  background: rgba(86, 85, 177, 0.1);
+  transform: translateY(-1px);
+}

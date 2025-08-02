@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Демо схемы продукта</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+          sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f8f9fa;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding: 2rem;
+        background: linear-gradient(135deg, #2c5aa0 0%, #1e3d6f 100%);
+        color: white;
+        border-radius: 12px;
+      }
+
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .product-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.2s ease;
+      }
+
+      .product-card:hover {
+        transform: translateY(-4px);
+      }
+
+      .product-image {
+        width: 100%;
+        height: 200px;
+        background: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: #666;
+      }
+
+      .product-content {
+        padding: 1.5rem;
+      }
+
+      .product-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #333;
+      }
+
+      .product-type {
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 1rem;
+      }
+
+      .customizable-badge {
+        background: #4caf50;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        margin-left: 0.5rem;
+      }
+
+      .product-description {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        line-height: 1.4;
+      }
+
+      .sizes-section,
+      .colors-section {
+        margin-bottom: 1rem;
+      }
+
+      .section-label {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #555;
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+
+      .sizes-list {
+        display: flex;
+        gap: 0.25rem;
+        flex-wrap: wrap;
+      }
+
+      .size-badge {
+        background: #f5f5f5;
+        border: 1px solid #ddd;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .colors-list {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+
+      .color-swatch {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        box-shadow: 0 0 0 1px #ddd;
+        cursor: pointer;
+      }
+
+      .product-price {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #2c5aa0;
+        margin-bottom: 1rem;
+      }
+
+      .product-meta {
+        font-size: 0.8rem;
+        color: #666;
+        border-top: 1px solid #eee;
+        padding-top: 0.75rem;
+      }
+
+      .schema-info {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .schema-info h3 {
+        color: #2c5aa0;
+        margin-bottom: 1rem;
+      }
+
+      .schema-info code {
+        background: #f8f9fa;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-family: monospace;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 2rem;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>🏪 Демо схемы продукта</h1>
+      <p>Новая структурированная схема для магазина одежды</p>
+    </div>
+
+    <div class="schema-info">
+      <h3>📋 О новой схеме продукта</h3>
+      <p>Эта схема включает следующие ключевые поля:</p>
+      <ul>
+        <li><code>name</code> - название товара</li>
+        <li>
+          <code>type</code> - тип товара (t-shirt, underwear, hoodie, и т.д.)
+        </li>
+        <li><code>sizes</code> - массив доступных размеров</li>
+        <li><code>colors</code> - массив цветов с названием, кодом и hex</li>
+        <li><code>price</code> - цена в рублях</li>
+        <li><code>imageURL</code> - ссылка на изображение</li>
+        <li><code>customizable</code> - поддержка кастомизации (boolean)</li>
+      </ul>
+    </div>
+
+    <div id="productsContainer">
+      <div class="loading">⏳ Загрузка продуктов...</div>
+    </div>
+
+    <script>
+      // Загрузка и отображение продуктов
+      async function loadProducts() {
+        try {
+          const response = await fetch("/data/products.json");
+          if (!response.ok) {
+            throw new Error("Не удалось загрузить данные продуктов");
+          }
+
+          const data = await response.json();
+          const products = data.products || [];
+
+          renderProducts(products);
+        } catch (error) {
+          console.error("Ошибка загрузки продуктов:", error);
+          document.getElementById("productsContainer").innerHTML = `
+                    <div class="loading">❌ Ошибка загрузки продуктов</div>
+                `;
+        }
+      }
+
+      function renderProducts(products) {
+        const container = document.getElementById("productsContainer");
+
+        if (products.length === 0) {
+          container.innerHTML =
+            '<div class="loading">📦 Продукты не найдены</div>';
+          return;
+        }
+
+        const productsHTML = products
+          .map(
+            (product) => `
+                <div class="product-card">
+                    <div class="product-image">
+                        ${getProductIcon(product.type)}
+                    </div>
+                    <div class="product-content">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-type">
+                            ${getProductTypeLabel(product.type)}
+                            ${
+                              product.customizable
+                                ? '<span class="customizable-badge">🎨 Кастомизация</span>'
+                                : ""
+                            }
+                        </div>
+                        
+                        <div class="product-description">${
+                          product.description || ""
+                        }</div>
+                        
+                        <div class="sizes-section">
+                            <span class="section-label">Размеры:</span>
+                            <div class="sizes-list">
+                                ${product.sizes
+                                  .map(
+                                    (size) =>
+                                      `<span class="size-badge">${size}</span>`
+                                  )
+                                  .join("")}
+                            </div>
+                        </div>
+                        
+                        <div class="colors-section">
+                            <span class="section-label">Цвета:</span>
+                            <div class="colors-list">
+                                ${product.colors
+                                  .slice(0, 4)
+                                  .map(
+                                    (color) => `
+                                    <div class="color-swatch" 
+                                         style="background-color: ${color.hex}"
+                                         title="${color.name}">
+                                    </div>
+                                `
+                                  )
+                                  .join("")}
+                                ${
+                                  product.colors.length > 4
+                                    ? `<span>+${
+                                        product.colors.length - 4
+                                      }</span>`
+                                    : ""
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="product-price">
+                            ${formatPrice(product.price)}
+                        </div>
+                        
+                        <div class="product-meta">
+                            ${
+                              product.material
+                                ? `Материал: ${product.material}<br>`
+                                : ""
+                            }
+                            ${
+                              product.brand ? `Бренд: ${product.brand}<br>` : ""
+                            }
+                            ${
+                              product.inStock
+                                ? `✅ В наличии`
+                                : "❌ Нет в наличии"
+                            }
+                            ${
+                              product.stockQuantity
+                                ? ` (${product.stockQuantity} шт.)`
+                                : ""
+                            }
+                        </div>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+
+        container.innerHTML = `<div class="product-grid">${productsHTML}</div>`;
+      }
+
+      function getProductIcon(type) {
+        const icons = {
+          "t-shirt": "👕",
+          underwear: "🩲",
+          hoodie: "🧥",
+          "tank-top": "👔",
+          shorts: "🩳",
+          dress: "👗",
+        };
+        return icons[type] || "👕";
+      }
+
+      function getProductTypeLabel(type) {
+        const labels = {
+          "t-shirt": "Футболка",
+          underwear: "Белье",
+          hoodie: "Худи",
+          "tank-top": "Майка",
+          shorts: "Шорты",
+          dress: "Платье",
+        };
+        return labels[type] || type;
+      }
+
+      function formatPrice(price) {
+        return new Intl.NumberFormat("ru-RU", {
+          style: "currency",
+          currency: "RUB",
+          minimumFractionDigits: 0,
+        }).format(price);
+      }
+
+      // Загрузка продуктов при загрузке страницы
+      document.addEventListener("DOMContentLoaded", loadProducts);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LOOM - Конфигуратор футболок</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #fafafa 0%, #f5f5f7 100%);
+        min-height: 100vh;
+      }
+
+      .glass-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+      }
+
+      .floating-element {
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .floating-element:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+      }
+
+      .apple-button {
+        background: linear-gradient(135deg, #007aff 0%, #0056cc 100%);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-weight: 600;
+        font-size: 17px;
+        padding: 14px 24px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+
+      .apple-button:hover {
+        transform: scale(1.02);
+        box-shadow: 0 8px 24px rgba(0, 122, 255, 0.3);
+      }
+
+      .apple-button-secondary {
+        background: rgba(0, 0, 0, 0.04);
+        border: none;
+        border-radius: 12px;
+        color: #1d1d1f;
+        font-weight: 500;
+        font-size: 17px;
+        padding: 14px 24px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+
+      .apple-button-secondary:hover {
+        background: rgba(0, 0, 0, 0.08);
+      }
+
+      .nothing-input {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+        padding: 16px 20px;
+        font-size: 17px;
+        transition: all 0.2s ease;
+        outline: none;
+      }
+
+      .nothing-input:focus {
+        border-color: #007aff;
+        box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+      }
+
+      .nothing-select {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+        padding: 16px 20px;
+        font-size: 17px;
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEuNUw2IDYuNUwxMSAxLjUiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K");
+        background-repeat: no-repeat;
+        background-position: right 20px center;
+        padding-right: 50px;
+      }
+
+      .configurator-preview {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 32px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+      }
+
+      .canvas-container {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .section-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1d1d1f;
+        margin-bottom: 8px;
+        letter-spacing: -0.02em;
+      }
+
+      .section-subtitle {
+        font-size: 19px;
+        color: #86868b;
+        margin-bottom: 48px;
+        font-weight: 400;
+      }
+
+      .control-group {
+        margin-bottom: 32px;
+      }
+
+      .control-label {
+        font-size: 17px;
+        font-weight: 600;
+        color: #1d1d1f;
+        margin-bottom: 12px;
+        display: block;
+      }
+
+      .color-picker-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .color-option {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+      }
+
+      .color-option:hover {
+        transform: scale(1.1);
+      }
+
+      .color-option.selected {
+        border-color: #007aff;
+        box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.2);
+      }
+
+      .file-upload-zone {
+        border: 2px dashed rgba(0, 0, 0, 0.1);
+        border-radius: 16px;
+        padding: 48px 24px;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.5);
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .file-upload-zone:hover {
+        border-color: #007aff;
+        background: rgba(0, 122, 255, 0.02);
+      }
+
+      .file-upload-zone.dragover {
+        border-color: #007aff;
+        background: rgba(0, 122, 255, 0.1);
+      }
+
+      .upload-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.6;
+      }
+
+      .upload-text {
+        font-size: 19px;
+        color: #1d1d1f;
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+
+      .upload-subtext {
+        font-size: 15px;
+        color: #86868b;
+      }
+
+      .order-summary {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 32px;
+        margin-top: 32px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+      }
+
+      .summary-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1d1d1f;
+        margin-bottom: 24px;
+        letter-spacing: -0.01em;
+      }
+
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        font-size: 17px;
+      }
+
+      .summary-item:last-child {
+        border-bottom: none;
+        font-weight: 600;
+        font-size: 19px;
+        color: #007aff;
+      }
+
+      .toggle-button {
+        background: rgba(0, 0, 0, 0.04);
+        border: none;
+        border-radius: 8px;
+        color: #1d1d1f;
+        font-weight: 500;
+        font-size: 15px;
+        padding: 8px 16px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+
+      .toggle-button.active {
+        background: #007aff;
+        color: white;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="glass-card sticky top-0 z-50 border-b border-gray-100">
+      <div class="max-w-7xl mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-8">
+            <h1 class="text-2xl font-bold text-gray-900">LOOM</h1>
+            <a
+              href="main.html"
+              class="text-gray-600 hover:text-gray-900 transition-colors"
+              >← Главная</a
+            >
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-6 py-16">
+      <!-- Header -->
+      <div class="text-center mb-16">
+        <h1 class="section-title">Создайте свой дизайн</h1>
+        <p class="section-subtitle">
+          Персонализируйте футболку с помощью нашего интуитивного редактора
+        </p>
+      </div>
+
+      <!-- Configurator Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <!-- Canvas Area -->
+        <div class="configurator-preview floating-element">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-semibold text-gray-900">Предпросмотр</h3>
+            <div class="flex space-x-2">
+              <button class="toggle-button active" id="frontView">
+                Спереди
+              </button>
+              <button class="toggle-button" id="backView">Сзади</button>
+            </div>
+          </div>
+
+          <div class="canvas-container">
+            <canvas
+              id="tshirtCanvas"
+              width="400"
+              height="500"
+              class="rounded-lg"
+            ></canvas>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="space-y-8">
+          <!-- Product Selection -->
+          <div class="glass-card rounded-2xl p-8 floating-element">
+            <h3 class="control-label">Выберите товар</h3>
+            <div class="grid grid-cols-1 gap-4">
+              <label
+                class="flex items-center p-4 rounded-xl border border-gray-200 cursor-pointer hover:border-blue-500 transition-colors"
+              >
+                <input
+                  type="radio"
+                  name="product"
+                  value="tshirt"
+                  checked
+                  class="sr-only"
+                />
+                <div class="flex items-center space-x-4 w-full">
+                  <div class="text-2xl">👕</div>
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-gray-900">
+                      Классическая футболка
+                    </h4>
+                    <p class="text-gray-600 text-sm">100% хлопок, унисекс</p>
+                  </div>
+                  <span class="font-semibold text-blue-600">12,990₽</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Color Selection -->
+          <div class="glass-card rounded-2xl p-8 floating-element">
+            <h3 class="control-label">Цвет футболки</h3>
+            <div class="color-picker-grid">
+              <div
+                class="color-option selected"
+                style="background: white; border-color: #e5e7eb"
+                data-color="white"
+              ></div>
+              <div
+                class="color-option"
+                style="background: #1f2937"
+                data-color="black"
+              ></div>
+              <div
+                class="color-option"
+                style="background: #1e40af"
+                data-color="navy"
+              ></div>
+              <div
+                class="color-option"
+                style="background: #6b7280"
+                data-color="gray"
+              ></div>
+              <div
+                class="color-option"
+                style="background: #dc2626"
+                data-color="red"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Size Selection -->
+          <div class="glass-card rounded-2xl p-8 floating-element">
+            <h3 class="control-label">Размер</h3>
+            <select class="nothing-select w-full" id="size" name="size">
+              <option value="">Выберите размер</option>
+              <option value="xs">XS</option>
+              <option value="s">S</option>
+              <option value="m">M</option>
+              <option value="l">L</option>
+              <option value="xl">XL</option>
+              <option value="xxl">XXL</option>
+            </select>
+          </div>
+
+          <!-- Design Upload -->
+          <div class="glass-card rounded-2xl p-8 floating-element">
+            <h3 class="control-label">Загрузите дизайн</h3>
+            <div class="file-upload-zone" id="uploadZone">
+              <div class="upload-icon">🎨</div>
+              <p class="upload-text">Перетащите изображение сюда</p>
+              <p class="upload-subtext">или нажмите для выбора файла</p>
+              <input
+                type="file"
+                id="designFile"
+                accept="image/*"
+                class="hidden"
+              />
+            </div>
+          </div>
+
+          <!-- Text Editor -->
+          <div class="glass-card rounded-2xl p-8 floating-element">
+            <h3 class="control-label">Добавить текст</h3>
+            <div class="space-y-4">
+              <input
+                type="text"
+                placeholder="Введите текст..."
+                class="nothing-input w-full"
+                id="textInput"
+              />
+              <div class="grid grid-cols-2 gap-4">
+                <select class="nothing-select" id="fontSelect">
+                  <option value="Inter">Inter</option>
+                  <option value="Helvetica">Helvetica</option>
+                  <option value="Arial">Arial</option>
+                </select>
+                <input
+                  type="color"
+                  value="#000000"
+                  class="nothing-input"
+                  id="textColor"
+                />
+              </div>
+              <button class="apple-button w-full" id="addTextBtn">
+                Добавить текст
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="order-summary floating-element mt-16">
+        <h3 class="summary-title">Сводка заказа</h3>
+        <div class="space-y-0">
+          <div class="summary-item">
+            <span class="text-gray-600">Товар</span>
+            <span class="font-medium">Классическая футболка</span>
+          </div>
+          <div class="summary-item">
+            <span class="text-gray-600">Цвет</span>
+            <span class="font-medium" id="selectedColor">Белый</span>
+          </div>
+          <div class="summary-item">
+            <span class="text-gray-600">Размер</span>
+            <span class="font-medium" id="selectedSize">Не выбран</span>
+          </div>
+          <div class="summary-item">
+            <span class="text-gray-600">Печать</span>
+            <span class="font-medium">3,000₽</span>
+          </div>
+          <div class="summary-item">
+            <span>Итого</span>
+            <span>15,990₽</span>
+          </div>
+        </div>
+
+        <div class="flex space-x-4 mt-8">
+          <button class="apple-button-secondary flex-1">Очистить</button>
+          <button class="apple-button flex-1">Заказать</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+      // Initialize Fabric.js canvas
+      const canvas = new fabric.Canvas("tshirtCanvas", {
+        backgroundColor: "#f5f5f5",
+        selection: true,
+      });
+
+      let tshirtObject = null;
+      let currentSide = "front";
+
+      // Load T-shirt image
+      fabric.Image.fromURL("/images/tshirt.png", function (img) {
+        img.set({
+          left: 50,
+          top: 50,
+          scaleX: 0.8,
+          scaleY: 0.8,
+          selectable: false,
+          evented: false,
+        });
+        tshirtObject = img;
+        canvas.add(img);
+        canvas.sendToBack(img);
+      });
+
+      // Color selection
+      document.querySelectorAll(".color-option").forEach((option) => {
+        option.addEventListener("click", function () {
+          document
+            .querySelectorAll(".color-option")
+            .forEach((o) => o.classList.remove("selected"));
+          this.classList.add("selected");
+
+          const color = this.dataset.color;
+          const colorNames = {
+            white: "Белый",
+            black: "Черный",
+            navy: "Темно-синий",
+            gray: "Серый",
+            red: "Красный",
+          };
+
+          document.getElementById("selectedColor").textContent =
+            colorNames[color];
+
+          // Apply color filter to t-shirt
+          if (tshirtObject) {
+            const colorMap = {
+              white: "#ffffff",
+              black: "#1f2937",
+              navy: "#1e40af",
+              gray: "#6b7280",
+              red: "#dc2626",
+            };
+
+            tshirtObject.filters = [
+              new fabric.Image.filters.BlendColor({
+                color: colorMap[color],
+                mode: "tint",
+                alpha: 0.5,
+              }),
+            ];
+            tshirtObject.applyFilters();
+            canvas.renderAll();
+          }
+        });
+      });
+
+      // Size selection
+      document.getElementById("size").addEventListener("change", function () {
+        const sizeNames = {
+          xs: "XS",
+          s: "S",
+          m: "M",
+          l: "L",
+          xl: "XL",
+          xxl: "XXL",
+        };
+        document.getElementById("selectedSize").textContent =
+          sizeNames[this.value] || "Не выбран";
+      });
+
+      // File upload
+      const uploadZone = document.getElementById("uploadZone");
+      const fileInput = document.getElementById("designFile");
+
+      uploadZone.addEventListener("click", () => fileInput.click());
+
+      uploadZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        uploadZone.classList.add("dragover");
+      });
+
+      uploadZone.addEventListener("dragleave", () => {
+        uploadZone.classList.remove("dragover");
+      });
+
+      uploadZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove("dragover");
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleFileUpload(files[0]);
+        }
+      });
+
+      fileInput.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) {
+          handleFileUpload(e.target.files[0]);
+        }
+      });
+
+      function handleFileUpload(file) {
+        const reader = new FileReader();
+        reader.onload = function (f) {
+          fabric.Image.fromURL(f.target.result, function (img) {
+            img.set({
+              left: 150,
+              top: 200,
+              scaleX: 0.3,
+              scaleY: 0.3,
+              cornerColor: "#007AFF",
+              borderColor: "#007AFF",
+            });
+            canvas.add(img);
+            canvas.setActiveObject(img);
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // Text addition
+      document
+        .getElementById("addTextBtn")
+        .addEventListener("click", function () {
+          const text = document.getElementById("textInput").value;
+          const font = document.getElementById("fontSelect").value;
+          const color = document.getElementById("textColor").value;
+
+          if (!text.trim()) return;
+
+          const textObj = new fabric.Textbox(text, {
+            left: 150,
+            top: 300,
+            fontFamily: font,
+            fill: color,
+            fontSize: 32,
+            cornerColor: "#007AFF",
+            borderColor: "#007AFF",
+            fontWeight: "normal",
+          });
+
+          canvas.add(textObj);
+          canvas.setActiveObject(textObj);
+          document.getElementById("textInput").value = "";
+        });
+
+      // Side toggle
+      document
+        .getElementById("frontView")
+        .addEventListener("click", function () {
+          document
+            .querySelectorAll(".toggle-button")
+            .forEach((btn) => btn.classList.remove("active"));
+          this.classList.add("active");
+          currentSide = "front";
+        });
+
+      document
+        .getElementById("backView")
+        .addEventListener("click", function () {
+          document
+            .querySelectorAll(".toggle-button")
+            .forEach((btn) => btn.classList.remove("active"));
+          this.classList.add("active");
+          currentSide = "back";
+        });
+    </script>
+  </body>
+</html>
