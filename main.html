@@ -10,90 +10,204 @@
       rel="stylesheet"
     />
     <!-- React CDN -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+    ></script>
     <!-- Product List CSS -->
     <link rel="stylesheet" href="ProductList.css" />
     <style>
+      :root {
+        --bg: #ffffff;
+        --text: #0a0a0a;
+        --muted: #6b7280;
+        --hairline: rgba(0, 0, 0, 0.08);
+        --panel: #ffffff;
+        --brand: #0a84ff;
+      }
+
       * {
         font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
       }
 
       body {
-        background: #ffffff;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(18px);
+        z-index: 100;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      }
+
+      .nav-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0.875rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-brand {
+        font-size: 1.25rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #111;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1.25rem;
+      }
+
+      .nav-link {
         color: #1d1d1f;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 0.875rem;
+        border-radius: 999px;
+        transition: background 0.2s ease;
+      }
+
+      .nav-link:hover,
+      .nav-link.active {
+        background: #f3f4f6;
       }
 
       .hero-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: radial-gradient(
+          1200px 600px at 50% -10%,
+          #0b0b0b 0%,
+          #000 60%,
+          #000 100%
+        );
         min-height: 100vh;
-        display: flex;
+        display: grid;
+        grid-template-rows: 1fr auto;
         align-items: center;
         justify-content: center;
         position: relative;
         overflow: hidden;
+        padding-top: 72px;
       }
 
       .hero-content {
         text-align: center;
-        max-width: 800px;
-        padding: 0 2rem;
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 3rem 2rem 1rem;
         position: relative;
         z-index: 2;
       }
 
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        color: #fff;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        margin-bottom: 16px;
+      }
+
       .hero-title {
-        font-size: clamp(3rem, 8vw, 6rem);
+        font-size: clamp(3.25rem, 8vw, 6rem);
         font-weight: 900;
         color: white;
-        line-height: 1;
-        margin-bottom: 1.5rem;
-        letter-spacing: -0.025em;
+        line-height: 0.95;
+        letter-spacing: -0.035em;
+        margin: 0 0 1rem 0;
       }
 
       .hero-subtitle {
-        font-size: 1.25rem;
-        color: rgba(255, 255, 255, 0.9);
-        margin-bottom: 3rem;
+        font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+        color: rgba(255, 255, 255, 0.78);
+        margin-bottom: 2.25rem;
         line-height: 1.6;
         font-weight: 400;
       }
 
+      .hero-cta {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
       .btn-primary {
         background: white;
-        color: #667eea;
-        padding: 1rem 2.5rem;
-        border-radius: 50px;
+        color: #000;
+        padding: 0.9rem 1.6rem;
+        border-radius: 999px;
         font-weight: 600;
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         text-decoration: none;
         display: inline-block;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 10px 30px rgba(255, 255, 255, 0.08);
       }
 
       .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 16px 40px rgba(255, 255, 255, 0.12);
       }
 
       .btn-outline {
-        border: 2px solid rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.35);
         color: white;
-        padding: 0.875rem 2.5rem;
-        border-radius: 50px;
+        padding: 0.85rem 1.5rem;
+        border-radius: 999px;
         font-weight: 600;
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         text-decoration: none;
         display: inline-block;
-        transition: all 0.3s ease;
-        background: rgba(255, 255, 255, 0.1);
+        transition: background 0.2s ease, border-color 0.2s ease;
+        background: rgba(255, 255, 255, 0.06);
         backdrop-filter: blur(10px);
       }
 
       .btn-outline:hover {
-        background: rgba(255, 255, 255, 0.2);
-        border-color: white;
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.6);
+      }
+
+      .hero-visual {
+        position: relative;
+        width: min(920px, 92vw);
+        margin: 2rem auto 0;
+        aspect-ratio: 16/9;
+        border-radius: 24px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.06) 0%,
+          rgba(255, 255, 255, 0.02) 100%
+        );
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .hero-visual img {
+        width: 80%;
+        height: auto;
+        object-fit: contain;
+        filter: drop-shadow(0 40px 80px rgba(0, 0, 0, 0.6));
       }
 
       .section {
@@ -101,27 +215,27 @@
       }
 
       .section-title {
-        font-size: 2.5rem;
+        font-size: clamp(2rem, 4.5vw, 2.75rem);
         font-weight: 800;
         text-align: center;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
         letter-spacing: -0.02em;
       }
 
       .section-subtitle {
-        font-size: 1.125rem;
-        color: #6b7280;
+        font-size: 1.05rem;
+        color: var(--muted);
         text-align: center;
-        margin-bottom: 4rem;
-        max-width: 600px;
+        margin-bottom: 3.25rem;
+        max-width: 640px;
         margin-left: auto;
         margin-right: auto;
       }
 
       .feature-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 3rem;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 2rem;
         max-width: 1200px;
         margin: 0 auto;
         padding: 0 2rem;
@@ -129,61 +243,64 @@
 
       .feature-card {
         text-align: center;
-        padding: 2rem;
+        padding: 1.75rem;
+        border: 1px solid var(--hairline);
+        border-radius: 20px;
+        background: var(--panel);
       }
 
       .feature-icon {
-        font-size: 3rem;
-        margin-bottom: 1.5rem;
+        font-size: 2rem;
+        margin-bottom: 1rem;
         display: block;
       }
 
       .feature-title {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         font-weight: 700;
-        margin-bottom: 1rem;
-        color: #1d1d1f;
+        margin-bottom: 0.5rem;
+        color: #111;
       }
 
       .feature-text {
-        color: #6b7280;
+        color: var(--muted);
         line-height: 1.6;
-        font-size: 1rem;
+        font-size: 0.98rem;
       }
 
       .product-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 2rem;
+        gap: 1.5rem;
         max-width: 1200px;
         margin: 0 auto;
         padding: 0 2rem;
       }
 
       .product-card {
-        background: white;
+        background: var(--panel);
         border-radius: 20px;
-        padding: 2rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-        border: 1px solid #f3f4f6;
+        padding: 1.5rem;
+        border: 1px solid var(--hairline);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
 
       .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+        transform: translateY(-4px);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.06);
       }
 
       .product-image {
         width: 100%;
-        height: 200px;
-        background: #f9fafb;
+        height: 220px;
+        background: #fff;
         border-radius: 16px;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
+        border: 1px solid var(--hairline);
       }
 
       .product-image img {
@@ -193,68 +310,23 @@
       }
 
       .product-title {
-        font-size: 1.25rem;
+        font-size: 1.1rem;
         font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: #1d1d1f;
+        margin-bottom: 0.25rem;
+        color: #111;
       }
 
       .product-description {
-        color: #6b7280;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
+        color: var(--muted);
+        font-size: 0.92rem;
+        margin-bottom: 0.75rem;
       }
 
       .product-price {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #667eea;
-        margin-bottom: 1.5rem;
-      }
-
-      .nav {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(20px);
-        z-index: 100;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-      }
-
-      .nav-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .nav-brand {
-        font-size: 1.5rem;
-        font-weight: 900;
-        color: #1d1d1f;
-      }
-
-      .nav-links {
-        display: flex;
-        gap: 2rem;
-      }
-
-      .nav-link {
-        color: #1d1d1f;
-        text-decoration: none;
-        font-weight: 500;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        transition: all 0.2s ease;
-      }
-
-      .nav-link:hover,
-      .nav-link.active {
-        background: #f3f4f6;
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--brand);
+        margin-bottom: 1rem;
       }
 
       .configurator-section {
@@ -263,25 +335,27 @@
       }
 
       .configurator-card {
-        max-width: 800px;
+        max-width: 880px;
         margin: 0 auto;
         background: white;
-        border-radius: 20px;
-        padding: 3rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border-radius: 24px;
+        padding: 2.25rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06);
         text-align: center;
+        border: 1px solid var(--hairline);
       }
 
       .configurator-preview {
         width: 100%;
-        height: 300px;
+        height: 320px;
         background: #f9fafb;
         border-radius: 16px;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
+        border: 1px solid var(--hairline);
       }
 
       .configurator-preview img {
@@ -290,23 +364,30 @@
         object-fit: contain;
       }
 
+      .footer {
+        border-top: 1px solid var(--hairline);
+        padding: 2rem;
+        text-align: center;
+        color: var(--muted);
+      }
+
       @media (max-width: 768px) {
         .nav-links {
           display: none;
         }
-
         .feature-grid,
         .product-grid {
           grid-template-columns: 1fr;
-          gap: 2rem;
+          gap: 1.25rem;
         }
-
         .hero-title {
           font-size: 3rem;
         }
-
         .section {
           padding: 4rem 0;
+        }
+        .hero-visual {
+          aspect-ratio: 4/3;
         }
       }
     </style>
@@ -317,6 +398,7 @@
       <div class="nav-content">
         <div class="nav-brand">LOOM</div>
         <div class="nav-links">
+          <a href="#products" class="nav-link">Каталог</a>
           <a href="configurator.html" class="nav-link">Кастомизация</a>
         </div>
       </div>
@@ -325,21 +407,21 @@
     <!-- Hero Section -->
     <section class="hero-section">
       <div class="hero-content">
-        <h1 class="hero-title">Создай свой стиль</h1>
+        <div class="eyebrow">Новый • Индивидуальный стиль</div>
+        <h1 class="hero-title">Создайте футболку, которая говорит за вас</h1>
         <p class="hero-subtitle">
-          Уникальные футболки с вашим дизайном. Выделяйтесь из толпы с
-          индивидуальным принтом и высоким качеством.
+          Уникальные футболки с вашим дизайном. Премиальные материалы, чистая
+          эстетика, быстрый выпуск.
         </p>
-        <div
-          style="
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-          "
-        >
+        <div class="hero-cta">
           <a href="configurator.html" class="btn-primary">Создать дизайн</a>
           <a href="#products" class="btn-outline">Смотреть каталог</a>
+        </div>
+        <div class="hero-visual">
+          <img
+            src="https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=800&q=80"
+            alt="Футболка LOOM"
+          />
         </div>
       </div>
     </section>
@@ -364,16 +446,15 @@
           <span class="feature-icon">👕</span>
           <h3 class="feature-title">Премиум качество</h3>
           <p class="feature-text">
-            100% органический хлопок и превосходная печать, которая не выцветает
-            после многочисленных стирок.
+            100% органический хлопок и превосходная печать, которая не
+            выцветает.
           </p>
         </div>
         <div class="feature-card">
           <span class="feature-icon">🚚</span>
           <h3 class="feature-title">Быстрая доставка</h3>
           <p class="feature-text">
-            Производство в течение 24 часов и экспресс-доставка по всему
-            Узбекистану.
+            Производство за 24 часа и экспресс-доставка по всему Узбекистану.
           </p>
         </div>
       </div>
@@ -389,62 +470,77 @@
       <!-- React Product List Component -->
       <div id="product-list-root"></div>
     </section>
-    </section>
 
     <!-- Configurator Section -->
     <section class="configurator-section">
       <div class="section-title" style="margin-bottom: 1rem">
         2D Конфигуратор
       </div>
-      <div class="section-subtitle" style="margin-bottom: 3rem">
+      <div class="section-subtitle" style="margin-bottom: 2rem">
         Создайте уникальный дизайн с помощью нашего интуитивного редактора
       </div>
 
       <div class="configurator-card">
         <div class="configurator-preview">
-          <img src="/images/tshirt.png" alt="2D Конфигуратор" />
+          <img src="images/tshirt.png" alt="Превью футболки" />
         </div>
-        <a
-          href="configurator.html"
-          class="btn-primary"
-          style="font-size: 1.125rem; padding: 1.25rem 3rem"
-        >
-          Начать дизайн
-        </a>
+        <a href="configurator.html" class="btn-primary">Открыть конфигуратор</a>
       </div>
     </section>
 
-    <!-- Footer -->
-    <footer
-      style="padding: 3rem 0; text-align: center; border-top: 1px solid #e5e7eb"
-    >
-      <p style="color: #6b7280">
-        © 2025 LOOM. Создано с ♥ для уникальных людей.
-        <a
-          href="mailto:info@loom.uz"
-          style="color: #667eea; text-decoration: none"
-          >info@loom.uz</a
-        >
-      </p>
+    <footer class="footer">
+      © LOOM. Индивидуальные футболки. Сделано с любовью.
     </footer>
 
     <script>
-      // Smooth scrolling
-      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener("click", function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute("href"));
-          if (target) {
-            target.scrollIntoView({
-              behavior: "smooth",
-              block: "start",
+      (function () {
+        const observer = new IntersectionObserver(
+          (entries, obs) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const el = entry.target;
+                el.style.transition =
+                  "transform 500ms ease, opacity 500ms ease";
+                el.style.opacity = "1";
+                el.style.transform = "translateY(0)";
+                obs.unobserve(el);
+              }
             });
-          }
+          },
+          { threshold: 0.12 }
+        );
+
+        const selectors = [
+          ".feature-card",
+          ".product-card",
+          ".configurator-card",
+          ".hero-visual",
+        ];
+        selectors.forEach((sel) => {
+          document.querySelectorAll(sel).forEach((el) => {
+            el.style.opacity = "0";
+            el.style.transform = "translateY(12px)";
+            observer.observe(el);
+          });
         });
-      });
+
+        const root = document.getElementById("product-list-root");
+        if (root) {
+          const mo = new MutationObserver(() => {
+            document.querySelectorAll(".product-card").forEach((el) => {
+              if (!el.dataset.revealInit) {
+                el.dataset.revealInit = "1";
+                el.style.opacity = "0";
+                el.style.transform = "translateY(12px)";
+                observer.observe(el);
+              }
+            });
+          });
+          mo.observe(root, { childList: true, subtree: true });
+        }
+      })();
     </script>
-    
-    <!-- Our React App -->
+
     <script src="dist/index.js"></script>
   </body>
 </html>

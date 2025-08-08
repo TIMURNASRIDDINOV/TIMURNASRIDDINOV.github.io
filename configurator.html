@@ -135,7 +135,6 @@
       .control-group {
         margin-bottom: 32px;
       }
-
       .control-label {
         font-size: 17px;
         font-weight: 600;
@@ -150,7 +149,6 @@
         gap: 12px;
         margin-top: 16px;
       }
-
       .color-option {
         width: 60px;
         height: 60px;
@@ -160,11 +158,9 @@
         transition: all 0.2s ease;
         position: relative;
       }
-
       .color-option:hover {
         transform: scale(1.1);
       }
-
       .color-option.selected {
         border-color: #007aff;
         box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.2);
@@ -179,12 +175,10 @@
         transition: all 0.3s ease;
         cursor: pointer;
       }
-
       .file-upload-zone:hover {
         border-color: #007aff;
         background: rgba(0, 122, 255, 0.02);
       }
-
       .file-upload-zone.dragover {
         border-color: #007aff;
         background: rgba(0, 122, 255, 0.1);
@@ -195,14 +189,12 @@
         margin-bottom: 16px;
         opacity: 0.6;
       }
-
       .upload-text {
         font-size: 19px;
         color: #1d1d1f;
         margin-bottom: 8px;
         font-weight: 500;
       }
-
       .upload-subtext {
         font-size: 15px;
         color: #86868b;
@@ -216,7 +208,6 @@
         margin-top: 32px;
         box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
       }
-
       .summary-title {
         font-size: 24px;
         font-weight: 700;
@@ -224,7 +215,6 @@
         margin-bottom: 24px;
         letter-spacing: -0.01em;
       }
-
       .summary-item {
         display: flex;
         justify-content: space-between;
@@ -233,7 +223,6 @@
         border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         font-size: 17px;
       }
-
       .summary-item:last-child {
         border-bottom: none;
         font-weight: 600;
@@ -252,10 +241,29 @@
         transition: all 0.2s ease;
         cursor: pointer;
       }
-
       .toggle-button.active {
         background: #007aff;
         color: white;
+      }
+
+      .inline-ctl {
+        display: flex;
+        gap: 8px;
+      }
+      .mini-btn {
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        background: #fff;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      .mini-btn:hover {
+        background: #f5f7fb;
+      }
+      .range {
+        width: 100%;
       }
     </style>
   </head>
@@ -307,6 +315,25 @@
               height="500"
               class="rounded-lg"
             ></canvas>
+          </div>
+
+          <div class="mt-4 inline-ctl">
+            <button class="mini-btn" id="centerSelected">Центрировать</button>
+            <button class="mini-btn" id="deleteSelected">Удалить</button>
+            <label
+              class="mini-btn"
+              style="display: flex; align-items: center; gap: 8px"
+            >
+              Размер текста
+              <input
+                id="fontSize"
+                type="range"
+                min="12"
+                max="72"
+                value="32"
+                class="range"
+              />
+            </label>
           </div>
         </div>
 
@@ -438,212 +465,511 @@
         <h3 class="summary-title">Сводка заказа</h3>
         <div class="space-y-0">
           <div class="summary-item">
-            <span class="text-gray-600">Товар</span>
-            <span class="font-medium">Классическая футболка</span>
+            <span class="text-gray-600">Товар</span
+            ><span class="font-medium">Классическая футболка</span>
           </div>
           <div class="summary-item">
-            <span class="text-gray-600">Цвет</span>
-            <span class="font-medium" id="selectedColor">Белый</span>
+            <span class="text-gray-600">Цвет</span
+            ><span class="font-medium" id="selectedColor">Белый</span>
           </div>
           <div class="summary-item">
-            <span class="text-gray-600">Размер</span>
-            <span class="font-medium" id="selectedSize">Не выбран</span>
+            <span class="text-gray-600">Размер</span
+            ><span class="font-medium" id="selectedSize">Не выбран</span>
           </div>
           <div class="summary-item">
-            <span class="text-gray-600">Печать</span>
-            <span class="font-medium">3,000₽</span>
+            <span class="text-gray-600">Печать</span
+            ><span class="font-medium">3,000₽</span>
           </div>
-          <div class="summary-item">
-            <span>Итого</span>
-            <span>15,990₽</span>
-          </div>
+          <div class="summary-item"><span>Итого</span><span>15,990₽</span></div>
         </div>
 
         <div class="flex space-x-4 mt-8">
-          <button class="apple-button-secondary flex-1">Очистить</button>
-          <button class="apple-button flex-1">Заказать</button>
+          <button class="apple-button-secondary flex-1" id="clearAll">
+            Очистить
+          </button>
+          <button class="apple-button flex-1" id="downloadMockup">
+            Скачать предпросмотр
+          </button>
         </div>
       </div>
     </div>
 
     <!-- JavaScript -->
     <script>
-      // Initialize Fabric.js canvas
-      const canvas = new fabric.Canvas("tshirtCanvas", {
-        backgroundColor: "#f5f5f5",
-        selection: true,
-      });
+      // Debug: Check if fabric is loaded
+      console.log("Fabric.js loaded:", typeof fabric !== "undefined");
 
-      let tshirtObject = null;
-      let currentSide = "front";
+      // Wait for DOM and fabric to be ready
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("DOM loaded");
 
-      // Load T-shirt image
-      fabric.Image.fromURL("/images/tshirt.png", function (img) {
-        img.set({
-          left: 50,
-          top: 50,
-          scaleX: 0.8,
-          scaleY: 0.8,
-          selectable: false,
-          evented: false,
-        });
-        tshirtObject = img;
-        canvas.add(img);
-        canvas.sendToBack(img);
-      });
+        if (typeof fabric === "undefined") {
+          console.error(
+            "Fabric.js not loaded! Creating fallback configurator..."
+          );
+          createFallbackConfigurator();
+          return;
+        }
 
-      // Color selection
-      document.querySelectorAll(".color-option").forEach((option) => {
-        option.addEventListener("click", function () {
-          document
-            .querySelectorAll(".color-option")
-            .forEach((o) => o.classList.remove("selected"));
-          this.classList.add("selected");
+        try {
+          // Canvas init
+          const canvas = new fabric.Canvas("tshirtCanvas", {
+            backgroundColor: "#f5f5f5",
+            selection: true,
+            preserveObjectStacking: true,
+          });
 
-          const color = this.dataset.color;
-          const colorNames = {
-            white: "Белый",
-            black: "Черный",
-            navy: "Темно-синий",
-            gray: "Серый",
-            red: "Красный",
-          };
+          console.log("Canvas created:", canvas);
 
-          document.getElementById("selectedColor").textContent =
-            colorNames[color];
+          let tshirtObject = null;
+          let currentSide = "front";
+          const DESIGN_AREA = {
+            left: 0.25,
+            top: 0.35,
+            width: 0.5,
+            height: 0.46,
+          }; // relative
+          let designAreaRect = null;
 
-          // Apply color filter to t-shirt
-          if (tshirtObject) {
-            const colorMap = {
-              white: "#ffffff",
-              black: "#1f2937",
-              navy: "#1e40af",
-              gray: "#6b7280",
-              red: "#dc2626",
-            };
+          // Base shirt
+          fabric.Image.fromURL(
+            "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=400&q=80",
+            function (img) {
+              console.log("T-shirt image loaded");
+              img.set({
+                left: 50,
+                top: 20,
+                scaleX: 0.8,
+                scaleY: 0.8,
+                selectable: false,
+                evented: false,
+              });
+              tshirtObject = img;
+              canvas.add(img);
+              canvas.sendToBack(img);
+              createOrUpdateDesignArea();
+            },
+            { crossOrigin: "anonymous" }
+          );
 
-            tshirtObject.filters = [
-              new fabric.Image.filters.BlendColor({
-                color: colorMap[color],
-                mode: "tint",
-                alpha: 0.5,
-              }),
-            ];
-            tshirtObject.applyFilters();
+          function createOrUpdateDesignArea() {
+            const { width, height } = canvas;
+            const w = width * DESIGN_AREA.width;
+            const h = height * DESIGN_AREA.height;
+            const cx = width * DESIGN_AREA.left + w / 2;
+            const cy = height * DESIGN_AREA.top + h / 2;
+            if (!designAreaRect) {
+              designAreaRect = new fabric.Rect({
+                left: cx,
+                top: cy,
+                width: w,
+                height: h,
+                fill: "transparent",
+                stroke: "#007aff",
+                strokeWidth: 1,
+                strokeDashArray: [6, 6],
+                selectable: false,
+                evented: false,
+                originX: "center",
+                originY: "center",
+              });
+              canvas.add(designAreaRect);
+              canvas.bringToFront(designAreaRect);
+            } else {
+              designAreaRect.set({ left: cx, top: cy, width: w, height: h });
+            }
             canvas.renderAll();
           }
-        });
-      });
 
-      // Size selection
-      document.getElementById("size").addEventListener("change", function () {
-        const sizeNames = {
-          xs: "XS",
-          s: "S",
-          m: "M",
-          l: "L",
-          xl: "XL",
-          xxl: "XXL",
-        };
-        document.getElementById("selectedSize").textContent =
-          sizeNames[this.value] || "Не выбран";
-      });
+          // Helpers
+          function getDesignBounds() {
+            const { width, height } = canvas;
+            const w = width * DESIGN_AREA.width;
+            const h = height * DESIGN_AREA.height;
+            const x = width * DESIGN_AREA.left + w / 2;
+            const y = height * DESIGN_AREA.top + h / 2;
+            return { cx: x, cy: y, w, h };
+          }
 
-      // File upload
-      const uploadZone = document.getElementById("uploadZone");
-      const fileInput = document.getElementById("designFile");
+          function clampObjectToDesignArea(obj) {
+            const { cx, cy, w, h } = getDesignBounds();
+            const halfW =
+              (obj.getScaledWidth
+                ? obj.getScaledWidth()
+                : obj.width * obj.scaleX) / 2;
+            const halfH =
+              (obj.getScaledHeight
+                ? obj.getScaledHeight()
+                : obj.height * obj.scaleY) / 2;
+            const minX = cx - w / 2 + halfW;
+            const maxX = cx + w / 2 - halfW;
+            const minY = cy - h / 2 + halfH;
+            const maxY = cy + h / 2 - halfH;
+            obj.left = Math.min(Math.max(obj.left, minX), maxX);
+            obj.top = Math.min(Math.max(obj.top, minY), maxY);
+          }
 
-      uploadZone.addEventListener("click", () => fileInput.click());
+          function isDesignObject(o) {
+            return o && o !== tshirtObject && o !== designAreaRect;
+          }
 
-      uploadZone.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        uploadZone.classList.add("dragover");
-      });
-
-      uploadZone.addEventListener("dragleave", () => {
-        uploadZone.classList.remove("dragover");
-      });
-
-      uploadZone.addEventListener("drop", (e) => {
-        e.preventDefault();
-        uploadZone.classList.remove("dragover");
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-          handleFileUpload(files[0]);
-        }
-      });
-
-      fileInput.addEventListener("change", (e) => {
-        if (e.target.files.length > 0) {
-          handleFileUpload(e.target.files[0]);
-        }
-      });
-
-      function handleFileUpload(file) {
-        const reader = new FileReader();
-        reader.onload = function (f) {
-          fabric.Image.fromURL(f.target.result, function (img) {
-            img.set({
-              left: 150,
-              top: 200,
-              scaleX: 0.3,
-              scaleY: 0.3,
-              cornerColor: "#007AFF",
-              borderColor: "#007AFF",
+          function forEachDesignObject(cb) {
+            canvas.getObjects().forEach((o) => {
+              if (isDesignObject(o)) cb(o);
             });
-            canvas.add(img);
-            canvas.setActiveObject(img);
+          }
+
+          function updateSideVisibility() {
+            forEachDesignObject((o) => {
+              o.visible = (o.side || "front") === currentSide;
+            });
+            canvas.renderAll();
+          }
+
+          // Color selection
+          document.querySelectorAll(".color-option").forEach((option) => {
+            option.addEventListener("click", function () {
+              document
+                .querySelectorAll(".color-option")
+                .forEach((o) => o.classList.remove("selected"));
+              this.classList.add("selected");
+              const color = this.dataset.color;
+              const colorNames = {
+                white: "Белый",
+                black: "Черный",
+                navy: "Темно-синий",
+                gray: "Серый",
+                red: "Красный",
+              };
+              document.getElementById("selectedColor").textContent =
+                colorNames[color];
+              if (tshirtObject) {
+                const colorMap = {
+                  white: "#ffffff",
+                  black: "#1f2937",
+                  navy: "#1e40af",
+                  gray: "#6b7280",
+                  red: "#dc2626",
+                };
+                tshirtObject.filters = [
+                  new fabric.Image.filters.BlendColor({
+                    color: colorMap[color],
+                    mode: "tint",
+                    alpha: 0.45,
+                  }),
+                ];
+                tshirtObject.applyFilters();
+                canvas.renderAll();
+              }
+            });
           });
-        };
-        reader.readAsDataURL(file);
+
+          // Size selection -> summary
+          document
+            .getElementById("size")
+            .addEventListener("change", function () {
+              const sizeNames = {
+                xs: "XS",
+                s: "S",
+                m: "M",
+                l: "L",
+                xl: "XL",
+                xxl: "XXL",
+              };
+              document.getElementById("selectedSize").textContent =
+                sizeNames[this.value] || "Не выбран";
+            });
+
+          // Upload
+          const uploadZone = document.getElementById("uploadZone");
+          const fileInput = document.getElementById("designFile");
+          uploadZone.addEventListener("click", () => fileInput.click());
+          uploadZone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            uploadZone.classList.add("dragover");
+          });
+          uploadZone.addEventListener("dragleave", () =>
+            uploadZone.classList.remove("dragover")
+          );
+          uploadZone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove("dragover");
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+              handleFileUpload(files[0]);
+            }
+          });
+          fileInput.addEventListener("change", (e) => {
+            if (e.target.files.length > 0) {
+              handleFileUpload(e.target.files[0]);
+            }
+          });
+
+          function handleFileUpload(file) {
+            const reader = new FileReader();
+            reader.onload = function (f) {
+              fabric.Image.fromURL(
+                f.target.result,
+                function (img) {
+                  const { cx, cy } = getDesignBounds();
+                  img.set({
+                    left: cx,
+                    top: cy,
+                    originX: "center",
+                    originY: "center",
+                    scaleX: 0.3,
+                    scaleY: 0.3,
+                    cornerColor: "#007AFF",
+                    borderColor: "#007AFF",
+                  });
+                  img.side = currentSide;
+                  clampObjectToDesignArea(img);
+                  canvas.add(img);
+                  canvas.setActiveObject(img);
+                },
+                { crossOrigin: "anonymous" }
+              );
+            };
+            reader.readAsDataURL(file);
+          }
+
+          // Text add/edit
+          const textInput = document.getElementById("textInput");
+          const fontSelect = document.getElementById("fontSelect");
+          const textColor = document.getElementById("textColor");
+          const fontSizeRange = document.getElementById("fontSize");
+
+          document
+            .getElementById("addTextBtn")
+            .addEventListener("click", function () {
+              const text = textInput.value;
+              if (!text.trim()) return;
+              const { cx, cy } = getDesignBounds();
+              const textObj = new fabric.Textbox(text, {
+                left: cx,
+                top: cy,
+                originX: "center",
+                originY: "center",
+                fontFamily: fontSelect.value,
+                fill: textColor.value,
+                fontSize: parseInt(fontSizeRange.value, 10) || 32,
+                cornerColor: "#007AFF",
+                borderColor: "#007AFF",
+                fontWeight: "normal",
+              });
+              textObj.side = currentSide;
+              clampObjectToDesignArea(textObj);
+              canvas.add(textObj);
+              canvas.setActiveObject(textObj);
+              textInput.value = "";
+            });
+
+          canvas.on("selection:created", syncTextControls);
+          canvas.on("selection:updated", syncTextControls);
+          function syncTextControls() {
+            const obj = canvas.getActiveObject();
+            if (obj && obj.type === "textbox") {
+              textInput.value = obj.text || "";
+              fontSelect.value = obj.fontFamily || "Inter";
+              textColor.value = obj.fill || "#000000";
+              fontSizeRange.value = Math.round(obj.fontSize || 32);
+            }
+          }
+
+          textInput.addEventListener("input", () => {
+            const o = canvas.getActiveObject();
+            if (o && o.type === "textbox") {
+              o.text = textInput.value;
+              canvas.renderAll();
+            }
+          });
+          fontSelect.addEventListener("change", () => {
+            const o = canvas.getActiveObject();
+            if (o && o.type === "textbox") {
+              o.fontFamily = fontSelect.value;
+              canvas.renderAll();
+            }
+          });
+          textColor.addEventListener("change", () => {
+            const o = canvas.getActiveObject();
+            if (o && (o.type === "textbox" || o.type === "i-text")) {
+              o.set("fill", textColor.value);
+              canvas.renderAll();
+            }
+          });
+          fontSizeRange.addEventListener("input", () => {
+            const o = canvas.getActiveObject();
+            if (o && o.type === "textbox") {
+              o.set("fontSize", parseInt(fontSizeRange.value, 10));
+              canvas.renderAll();
+            }
+          });
+
+          // Side toggle
+          document
+            .getElementById("frontView")
+            .addEventListener("click", function () {
+              document
+                .querySelectorAll(".toggle-button")
+                .forEach((btn) => btn.classList.remove("active"));
+              this.classList.add("active");
+              currentSide = "front";
+              updateSideVisibility();
+            });
+          document
+            .getElementById("backView")
+            .addEventListener("click", function () {
+              document
+                .querySelectorAll(".toggle-button")
+                .forEach((btn) => btn.classList.remove("active"));
+              this.classList.add("active");
+              currentSide = "back";
+              updateSideVisibility();
+            });
+
+          // Constrain to design area while moving/scaling
+          canvas.on("object:moving", (e) => {
+            const o = e.target;
+            if (isDesignObject(o)) {
+              clampObjectToDesignArea(o);
+            }
+          });
+          canvas.on("object:scaling", (e) => {
+            const o = e.target;
+            if (isDesignObject(o)) {
+              clampObjectToDesignArea(o);
+            }
+          });
+
+          // Center and delete
+          document
+            .getElementById("centerSelected")
+            .addEventListener("click", () => {
+              const o = canvas.getActiveObject();
+              if (o && isDesignObject(o)) {
+                const { cx, cy } = getDesignBounds();
+                o.set({
+                  left: cx,
+                  top: cy,
+                  originX: "center",
+                  originY: "center",
+                });
+                canvas.renderAll();
+              }
+            });
+          document
+            .getElementById("deleteSelected")
+            .addEventListener("click", () => {
+              const o = canvas.getActiveObject();
+              if (o && isDesignObject(o)) {
+                canvas.remove(o);
+                canvas.discardActiveObject();
+                canvas.requestRenderAll();
+              }
+            });
+          document.addEventListener("keydown", (e) => {
+            const o = canvas.getActiveObject();
+            if (!o || !isDesignObject(o)) return;
+            const step = e.shiftKey ? 10 : 1;
+            if (e.key === "Delete" || e.key === "Backspace") {
+              canvas.remove(o);
+              canvas.discardActiveObject();
+              canvas.requestRenderAll();
+            }
+            if (e.key === "ArrowLeft") {
+              o.left -= step;
+              clampObjectToDesignArea(o);
+              canvas.requestRenderAll();
+            }
+            if (e.key === "ArrowRight") {
+              o.left += step;
+              clampObjectToDesignArea(o);
+              canvas.requestRenderAll();
+            }
+            if (e.key === "ArrowUp") {
+              o.top -= step;
+              clampObjectToDesignArea(o);
+              canvas.requestRenderAll();
+            }
+            if (e.key === "ArrowDown") {
+              o.top += step;
+              clampObjectToDesignArea(o);
+              canvas.requestRenderAll();
+            }
+          });
+
+          // Clear and download
+          document.getElementById("clearAll").addEventListener("click", () => {
+            const toRemove = canvas.getObjects().filter(isDesignObject);
+            toRemove.forEach((o) => canvas.remove(o));
+            canvas.discardActiveObject();
+            canvas.requestRenderAll();
+          });
+          document
+            .getElementById("downloadMockup")
+            .addEventListener("click", () => {
+              const dataURL = canvas.toDataURL({ format: "png", quality: 1 });
+              const a = document.createElement("a");
+              a.href = dataURL;
+              a.download = `loom-${currentSide}.png`;
+              a.click();
+            });
+
+          // Control visuals
+          fabric.Object.prototype.transparentCorners = false;
+          fabric.Object.prototype.cornerStyle = "circle";
+          fabric.Object.prototype.cornerColor = "#007AFF";
+          fabric.Object.prototype.borderColor = "#007AFF";
+
+          // Resize handling
+          window.addEventListener("resize", () => {
+            createOrUpdateDesignArea();
+            canvas.requestRenderAll();
+          });
+        } catch (error) {
+          console.error("Error initializing fabric.js:", error);
+          createFallbackConfigurator();
+        }
+      });
+
+      // Fallback simple configurator
+      function createFallbackConfigurator() {
+        const canvas = document.getElementById("tshirtCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Clear canvas
+        ctx.fillStyle = "#f5f5f5";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw simple t-shirt
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(100, 100, 200, 250);
+
+        // Draw neck
+        ctx.fillStyle = "#f5f5f5";
+        ctx.fillRect(150, 80, 100, 40);
+
+        // Add text
+        ctx.fillStyle = "#000000";
+        ctx.font = "16px Inter";
+        ctx.textAlign = "center";
+        ctx.fillText("Простой предпросмотр", 200, 200);
+        ctx.fillText("Fabric.js не загружен", 200, 220);
+
+        // Disable controls
+        document.querySelectorAll("button, input, select").forEach((el) => {
+          el.disabled = true;
+        });
+
+        // Show message
+        const msg = document.createElement("div");
+        msg.style.cssText =
+          "position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,0,0,0.1); padding: 20px; border-radius: 8px; text-align: center;";
+        msg.innerHTML =
+          "<h3>Ошибка загрузки</h3><p>Fabric.js не загружен. Проверьте интернет-соединение.</p>";
+        canvas.parentElement.style.position = "relative";
+        canvas.parentElement.appendChild(msg);
       }
-
-      // Text addition
-      document
-        .getElementById("addTextBtn")
-        .addEventListener("click", function () {
-          const text = document.getElementById("textInput").value;
-          const font = document.getElementById("fontSelect").value;
-          const color = document.getElementById("textColor").value;
-
-          if (!text.trim()) return;
-
-          const textObj = new fabric.Textbox(text, {
-            left: 150,
-            top: 300,
-            fontFamily: font,
-            fill: color,
-            fontSize: 32,
-            cornerColor: "#007AFF",
-            borderColor: "#007AFF",
-            fontWeight: "normal",
-          });
-
-          canvas.add(textObj);
-          canvas.setActiveObject(textObj);
-          document.getElementById("textInput").value = "";
-        });
-
-      // Side toggle
-      document
-        .getElementById("frontView")
-        .addEventListener("click", function () {
-          document
-            .querySelectorAll(".toggle-button")
-            .forEach((btn) => btn.classList.remove("active"));
-          this.classList.add("active");
-          currentSide = "front";
-        });
-
-      document
-        .getElementById("backView")
-        .addEventListener("click", function () {
-          document
-            .querySelectorAll(".toggle-button")
-            .forEach((btn) => btn.classList.remove("active"));
-          this.classList.add("active");
-          currentSide = "back";
-        });
     </script>
   </body>
 </html>

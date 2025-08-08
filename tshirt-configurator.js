@@ -58,6 +58,7 @@ let tshirtImage;
 document.addEventListener("DOMContentLoaded", function () {
   initializeConfigurator();
   setupEventListeners();
+  setupRevealAnimations();
 });
 
 // Initialize the configurator canvas
@@ -666,3 +667,30 @@ window.TshirtConfigurator = {
   updateDesignScale,
   updateDesignRotation,
 };
+
+// Site-wide subtle reveal animations
+function setupRevealAnimations() {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.style.transition =
+            "transform 500ms ease, opacity 500ms ease";
+          entry.target.style.opacity = "1";
+          entry.target.style.transform = "translateY(0)";
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12 }
+  );
+
+  const revealables = document.querySelectorAll(
+    ".floating-element, .feature-card, .product-card, .configurator-card"
+  );
+  revealables.forEach((el) => {
+    el.style.opacity = "0";
+    el.style.transform = "translateY(12px)";
+    observer.observe(el);
+  });
+}
