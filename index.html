@@ -18,6 +18,15 @@
       crossorigin
       src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
     ></script>
+    <!-- Three.js CDN -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
     <!-- Product List CSS -->
     <link rel="stylesheet" href="ProductList.css" />
     <style>
@@ -209,6 +218,72 @@
         height: auto;
         object-fit: contain;
         filter: drop-shadow(0 40px 80px rgba(0, 0, 0, 0.6));
+      }
+
+      /* 3D Model Viewer Styles */
+      .model-viewer-container {
+        position: relative;
+        width: min(920px, 92vw);
+        margin: 2rem auto 0;
+        aspect-ratio: 16/9;
+        border-radius: 24px;
+        background: linear-gradient(
+          135deg,
+          rgba(10, 132, 255, 0.08) 0%,
+          rgba(139, 92, 246, 0.08) 100%
+        );
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #model-canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        cursor: grab;
+      }
+
+      #model-canvas:active {
+        cursor: grabbing;
+      }
+
+      .model-loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1rem;
+        font-weight: 500;
+        z-index: 1;
+      }
+
+      .model-controls-hint {
+        position: absolute;
+        bottom: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(10px);
+        color: rgba(255, 255, 255, 0.9);
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        z-index: 2;
+        pointer-events: none;
+        opacity: 0;
+        animation: fadeInHint 0.5s ease 1s forwards;
+      }
+
+      @keyframes fadeInHint {
+        to {
+          opacity: 1;
+        }
       }
 
       .section {
@@ -418,11 +493,14 @@
           <a href="configurator.html" class="btn-primary">Создать дизайн</a>
           <a href="#products" class="btn-outline">Смотреть каталог</a>
         </div>
-        <div class="hero-visual">
-          <img
-            src="https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=800&q=80"
-            alt="Футболка LOOM"
-          />
+        <div class="model-viewer-container">
+          <div class="model-loading" id="model-loading">
+            Загрузка 3D модели...
+          </div>
+          <canvas id="model-canvas"></canvas>
+          <div class="model-controls-hint">
+            🖱️ Перетащите для вращения · Прокрутите для масштабирования
+          </div>
         </div>
       </div>
     </section>
@@ -515,7 +593,7 @@
           ".feature-card",
           ".product-card",
           ".configurator-card",
-          ".hero-visual",
+          ".model-viewer-container",
         ];
         selectors.forEach((sel) => {
           document.querySelectorAll(sel).forEach((el) => {
@@ -540,6 +618,128 @@
           mo.observe(root, { childList: true, subtree: true });
         }
       })();
+    </script>
+
+    <!-- 3D Model Viewer Script -->
+    <script type="module">
+      import * as THREE from "three";
+      import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+      // Scene setup
+      const canvas = document.getElementById("model-canvas");
+      const loadingEl = document.getElementById("model-loading");
+      const scene = new THREE.Scene();
+
+      // --- CAMERA SETUP ---
+      const camera = new THREE.PerspectiveCamera(
+        45,
+        canvas.clientWidth / canvas.clientHeight,
+        0.1,
+        1000
+      );
+      camera.position.set(0, 1.2, 3); // pulled back slightly, centered view
+      camera.lookAt(0, 0.5, 0);
+
+      // Renderer setup with transparent background
+      const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        alpha: true,
+      });
+      renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setClearColor(0x000000, 0);
+
+      // --- LIGHTING (cinematic gradient feel) ---
+      const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444466, 1.2);
+      hemiLight.position.set(0, 2, 0);
+      scene.add(hemiLight);
+
+      const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+      dirLight.position.set(3, 5, 2);
+      dirLight.castShadow = true;
+      scene.add(dirLight);
+
+      // soft rim light for extra depth
+      const rimLight = new THREE.DirectionalLight(0x88aaff, 0.6);
+      rimLight.position.set(-3, 2, -2);
+      scene.add(rimLight);
+
+      // --- ORBIT CONTROLS ---
+      const controls = new OrbitControls(camera, canvas);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.07;
+      controls.enableZoom = true;
+      controls.enablePan = false; // keeps model centered
+      controls.minDistance = 2;
+      controls.maxDistance = 6;
+      controls.target.set(0, 0.5, 0);
+
+      // --- LOAD YOUR MODEL ---
+      const loader = new OBJLoader();
+      let model = null;
+
+      loader.load(
+        "assets/models/oversized-tshirt.obj",
+        function (object) {
+          model = object;
+
+          // Apply material to the model
+          object.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                roughness: 0.4,
+                metalness: 0.1,
+                flatShading: false,
+              });
+            }
+          });
+
+          object.scale.set(1, 1, 1);
+          object.position.set(0, 0, 0);
+          object.rotation.y = Math.PI; // model looks toward camera on load
+          scene.add(object);
+          loadingEl.style.display = "none";
+
+          // Animation loop with smooth auto-rotation
+          function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+
+            // slow cinematic spin
+            object.rotation.y += 0.003;
+
+            renderer.render(scene, camera);
+          }
+
+          animate();
+        },
+        function (xhr) {
+          const percentComplete = (xhr.loaded / xhr.total) * 100;
+          loadingEl.textContent = `Загрузка: ${Math.round(percentComplete)}%`;
+        },
+        function (error) {
+          console.error("Error loading model:", error);
+          loadingEl.textContent = "Ошибка загрузки модели";
+          loadingEl.style.color = "rgba(239, 68, 68, 0.9)";
+        }
+      );
+
+      // Handle window resize
+      function onWindowResize() {
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      }
+
+      window.addEventListener("resize", onWindowResize);
     </script>
 
     <script src="dist/index.js"></script>
