@@ -625,7 +625,7 @@ function showSuccessMessage(orderNumber) {
   if (confirm("Хотите оформить еще один заказ?")) {
     resetForm();
   } else {
-    window.location.href = "main.html";
+    window.location.href = "index.html";
   }
 }
 

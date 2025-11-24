@@ -12,8 +12,6 @@
     "copy-assets": "mkdir -p dist && cp -r *.html *.css data images dist/ 2>/dev/null || true",
     "build:simple": "mkdir -p dist && cp src/index.tsx dist/index.js && cp -r *.html *.css data images dist/ 2>/dev/null || true",
     "deploy": "npm run build:gh-pages && gh-pages -d dist",
-    "test": "node test-api.js",
-    "test:api": "node test-api.js",
     "lint": "echo \"Linting not configured\" && exit 0"
   },
   "keywords": [

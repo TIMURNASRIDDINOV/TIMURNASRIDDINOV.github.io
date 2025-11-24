@@ -117,27 +117,12 @@ const colorNames = {
 
 // Главная страница
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "main.html"));
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 // Каталог товаров
 app.get("/catalog", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
-});
-
-// Админ-панель
-app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "admin.html"));
-});
-
-// Простая админ-панель
-app.get("/simple-admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "simple-admin.html"));
-});
-
-// Страница создания тестовых заказов
-app.get("/test-orders", (req, res) => {
-  res.sendFile(path.join(__dirname, "test-orders.html"));
 });
 
 // Демо схемы продукта
