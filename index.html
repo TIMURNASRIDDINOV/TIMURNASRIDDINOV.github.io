@@ -459,17 +459,19 @@
       }
 
       .video-wrapper {
-        max-width: 800px;
+        max-width: 600px;
         margin: 0 auto 30px;
         border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        aspect-ratio: 1/1;
       }
 
       .preview-video {
         width: 100%;
-        height: auto;
+        height: 100%;
         display: block;
+        object-fit: cover;
       }
 
       .btn {
@@ -745,20 +747,11 @@
         </div>
         <div class="hero-3d-wrapper">
           <div class="model-preview-section">
-            <h2 class="section-title">Preview Our T-Shirt Model</h2>
             <div class="video-wrapper">
               <video autoplay loop muted playsinline class="preview-video">
                 <source src="images/tshirtgif.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
-            </div>
-            <a href="catalog.html" class="btn btn-primary">
-              View in 3D
-              <i
-                data-lucide="arrow-right"
-                style="width: 18px; height: 18px"
-              ></i>
-            </a>
           </div>
         </div>
       </div>
