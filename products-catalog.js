@@ -92,7 +92,12 @@
       ? "Настроить дизайн"
       : "Недоступно";
     button.disabled = !product.customizable;
-    button.setAttribute("aria-label", `Настроить ${product.name}`);
+    button.setAttribute(
+      "aria-label",
+      product.customizable
+        ? `Настроить дизайн ${product.name}`
+        : `Недоступно для ${product.name}`
+    );
 
     // Add click event listener
     if (product.customizable) {

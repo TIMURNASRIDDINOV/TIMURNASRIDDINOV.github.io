@@ -119,29 +119,31 @@
   letter-spacing: -0.01em;
 }
 
-.btn-primary {
+/* Primary button - higher specificity to override global .btn-primary */
+.product-card .customize-btn.btn-primary {
   background: #0a0a0a;
   color: #ffffff;
 }
 
-.btn-primary:hover {
+.product-card .customize-btn.btn-primary:hover {
   background: #1a1a1a;
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.btn-primary:active {
+.product-card .customize-btn.btn-primary:active {
   transform: translateY(0);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
-.btn-disabled {
+/* Disabled button */
+.product-card .customize-btn.btn-disabled {
   background: #e5e7eb;
   color: #9ca3af;
   cursor: not-allowed;
 }
 
-.btn-disabled:hover {
+.product-card .customize-btn.btn-disabled:hover {
   transform: none;
   box-shadow: none;
 }
