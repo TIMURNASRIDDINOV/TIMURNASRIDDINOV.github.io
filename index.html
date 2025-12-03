@@ -9,6 +9,9 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap"
       rel="stylesheet"
     />
+    <!-- Preload critical font to prevent layout shift -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- React CDN -->
     <script
       crossorigin
@@ -29,9 +32,25 @@
     </script>
     <!-- Product List CSS -->
     <link rel="stylesheet" href="ProductList.css" />
+    <!-- Product Catalog CSS -->
+    <link rel="stylesheet" href="products-catalog.css" />
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
+      /* Prevent layout shift during font loading */
+      * {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Ensure body doesn't shift */
+      html, body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
+
       :root {
         --bg: #ffffff;
         --text: #0a0a0a;
@@ -42,60 +61,165 @@
         --brand-ink: #0b66d6;
       }
 
-      * {
-        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-      }
-
       body {
         background: var(--bg);
         color: var(--text);
       }
+
+      /* -----------------------------
+         Navigation: Modern & Premium
+         - Uses a subtle dark glass background so white link text reads well.
+         - Link styles borrow the "underline-center" pattern and purple hover.
+         - Responsive spacing matches md:space-x-6 and lg:space-x-8.
+         ------------------------------ */
 
       .nav {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(18px);
+        /* Explicit height prevents layout shift on load */
+        min-height: 72px;
+        /* Dark semi-transparent background so white links are visible over hero */
+        background: linear-gradient(180deg, rgba(8,8,10,0.6), rgba(8,8,10,0.5));
+        backdrop-filter: blur(18px) saturate(140%);
+        -webkit-backdrop-filter: blur(18px) saturate(140%);
         z-index: 100;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+        box-shadow: 0 6px 30px rgba(3,3,5,0.12);
+        /* Prevent any shifting during load */
+        will-change: auto;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        /* Ensure nav renders immediately in correct position */
+        contain: layout style paint;
       }
 
       .nav-content {
-        max-width: 1200px;
+        max-width: 1280px;
         margin: 0 auto;
-        padding: 0.875rem 2rem;
+        padding: 1rem 2rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        /* Explicit height to prevent reflow */
+        min-height: 72px;
       }
 
       .nav-brand {
-        font-size: 1.25rem;
+        font-size: 1.45rem;
         font-weight: 800;
-        letter-spacing: -0.02em;
-        color: #111;
+        letter-spacing: 0.06em;
+        color: #ffffff;
+        text-transform: uppercase;
+        /* Remove transition that might cause initial shift */
+        /* Only transition on interaction, not on load */
       }
 
+      /* Navigation links container: keeps original structure but adds responsive spacing
+         md: space-x-6  (approx. 1.5rem)
+         lg: space-x-8  (approx. 2rem)
+         Using gap for perfectly consistent spacing */
       .nav-links {
         display: flex;
-        gap: 1.25rem;
+        align-items: center;
+        gap: 1.25rem; /* Base spacing: 20px */
+        margin-right: 3rem; /* Shift further left by adding more right margin */
       }
 
+      /* Responsive spacing using gap (more reliable than margin) */
+      @media (min-width: 768px) {
+        .nav-links {
+          gap: 1.5rem; /* md: 24px */
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .nav-links {
+          gap: 2rem; /* lg: 32px */
+        }
+      }
+
+      /* Base link reset for consistent behavior - NO MOVEMENT ON HOVER */
       .nav-link {
-        color: #1d1d1f;
+        color: #ffffff; /* primary link color (white) */
         text-decoration: none;
         font-weight: 500;
-        padding: 0.5rem 0.875rem;
-        border-radius: 999px;
-        transition: background 0.2s ease;
+        font-size: 0.95rem;
+        padding: 0.5rem 0.75rem;
+        margin: 0; /* Ensure no margin breaks gap spacing */
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: color 280ms ease;
+        -webkit-tap-highlight-color: transparent;
+        /* NO transform on hover to prevent jumping */
+        /* NO background or box effects - only underline */
       }
 
-      .nav-link:hover,
-      .nav-link.active {
-        background: #f3f4f6;
+      /* Purple hover color - smooth transition, no movement, no box */
+      .nav-link:hover {
+        color: #c084fc; /* purple-400 for better contrast */
       }
+
+      /* Active link: only text styling, no background */
+      .nav-link.active {
+        color: #ffffff;
+        font-weight: 600;
+      }
+
+      /* Underline indicator - no jump, smooth scale from center */
+      .link-underline-center::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 4px;
+        transform: translateX(-50%) scaleX(0);
+        transform-origin: center;
+        height: 2px;
+        width: 70%;
+        border-radius: 2px;
+        background: linear-gradient(90deg, transparent, #c084fc, transparent);
+        transition: transform 380ms cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+      }
+
+      .link-underline-center:hover::after {
+        transform: translateX(-50%) scaleX(1);
+      }
+
+      /* Active state shows persistent underline */
+      .link-underline-center.active::after {
+        transform: translateX(-50%) scaleX(1);
+        background: linear-gradient(90deg, transparent, #ffffff, transparent);
+      }
+
+      /* Remove all focus/active outlines and silhouettes */
+      .nav-link:focus,
+      .nav-link:active,
+      .nav-link:focus-visible {
+        outline: none;
+        box-shadow: none;
+        border: none;
+      }
+
+      /* Small icon inside link (optional) - smooth opacity only, no movement */
+      .nav-icon {
+        width: 16px;
+        height: 16px;
+        opacity: 0.85;
+        transition: opacity 280ms ease;
+      }
+
+      .nav-link:hover .nav-icon,
+      .nav-link.active .nav-icon {
+        opacity: 1;
+        /* Removed transform to prevent jumping */
+      }
+
+      /* Gap-based spacing applied directly to .nav-links - no need for utility classes */
+      /* Smaller screens: stack links inside a slide-out handled elsewhere (no change here) */
 
       .hero-section {
         background: radial-gradient(
@@ -110,7 +234,8 @@
         justify-content: center;
         position: relative;
         overflow: hidden;
-        padding: 120px 2rem 80px;
+        /* Further reduced top padding to 80px for higher positioning */
+        padding: 80px 2rem 60px;
       }
 
       .hero-container {
@@ -454,13 +579,13 @@
       }
 
       .model-preview-section {
-        padding: 60px 0;
+        padding: 0;
         text-align: center;
       }
 
       .video-wrapper {
-        max-width: 600px;
-        margin: 0 auto 30px;
+        max-width: 420px; /* Reduced from 600px for better balance with text */
+        margin: 0 auto 0 6rem; /* Shifted further right by 6rem (96px) */
         border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
@@ -720,10 +845,16 @@
     <nav class="nav">
       <div class="nav-content">
         <div class="nav-brand">LOOM</div>
-        <div class="nav-links">
-          <a href="index.html" class="nav-link active">Главная</a>
-          <a href="catalog.html" class="nav-link">Каталог</a>
-          <a href="configurator.html" class="nav-link">Кастомизация</a>
+        <!--
+          Keep original structure but apply modern utility-like spacing classes:
+          - md: space-x-6 (implemented by .space-md-x-6)
+          - lg: space-x-8 (implemented by .space-lg-x-8)
+          Links use .link-underline-center for animated underline from center.
+        -->
+        <div class="nav-links space-md-x-6 space-lg-x-8">
+          <a href="index.html" class="nav-link link-underline-center active text-sm lg:text-base">Главная</a>
+          <a href="catalog.html" class="nav-link link-underline-center text-sm lg:text-base">Каталог</a>
+          <a href="configurator.html" class="nav-link link-underline-center text-sm lg:text-base">Кастомизация</a>
         </div>
       </div>
     </nav>
@@ -987,6 +1118,8 @@
       })();
     </script>
 
+    <!-- Product Catalog Vanilla JS -->
+    <script src="products-catalog.js"></script>
     <script src="dist/index.js"></script>
   </body>
 </html>
