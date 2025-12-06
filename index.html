@@ -10,8 +10,8 @@
       rel="stylesheet"
     />
     <!-- Preload critical font to prevent layout shift -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- React CDN -->
     <script
       crossorigin
@@ -45,7 +45,8 @@
       }
 
       /* Ensure body doesn't shift */
-      html, body {
+      html,
+      body {
         margin: 0;
         padding: 0;
         overflow-x: hidden;
@@ -81,12 +82,16 @@
         /* Explicit height prevents layout shift on load */
         min-height: 72px;
         /* Dark semi-transparent background so white links are visible over hero */
-        background: linear-gradient(180deg, rgba(8,8,10,0.6), rgba(8,8,10,0.5));
+        background: linear-gradient(
+          180deg,
+          rgba(8, 8, 10, 0.6),
+          rgba(8, 8, 10, 0.5)
+        );
         backdrop-filter: blur(18px) saturate(140%);
         -webkit-backdrop-filter: blur(18px) saturate(140%);
         z-index: 100;
-        border-bottom: 1px solid rgba(255,255,255,0.04);
-        box-shadow: 0 6px 30px rgba(3,3,5,0.12);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        box-shadow: 0 6px 30px rgba(3, 3, 5, 0.12);
         /* Prevent any shifting during load */
         will-change: auto;
         transform: translateZ(0);
@@ -171,7 +176,7 @@
 
       /* Underline indicator - no jump, smooth scale from center */
       .link-underline-center::after {
-        content: '';
+        content: "";
         position: absolute;
         left: 50%;
         bottom: 4px;
@@ -820,25 +825,25 @@
           justify-content: center;
           gap: 1rem;
         }
-        
+
         .hero-cta .btn-primary,
         .hero-cta .btn-outline {
           min-width: 180px;
         }
       }
-      
+
       /* Landscape Mode for Tablets and Mobile */
       @media (max-height: 600px) and (orientation: landscape) {
         .hero-section {
           padding: 40px 2rem;
         }
-        
+
         .hero-cta {
           justify-content: center;
           flex-direction: row;
           gap: 1rem;
         }
-        
+
         .hero-container {
           gap: 1.5rem;
         }
@@ -846,50 +851,54 @@
 
       /* Mobile Responsiveness - Tablets and Below */
       @media (max-width: 768px) {
+        .hero-section {
+          padding: 80px 0 60px; /* Remove side padding on mobile */
+        }
+
         .nav-links {
           display: none;
         }
-        
+
         .feature-grid,
         .product-grid {
           grid-template-columns: 1fr;
           gap: 1.25rem;
         }
-        
+
         .hero-container {
           grid-template-columns: 1fr;
           gap: 2rem;
         }
-        
+
         .hero-text {
           max-width: 100%;
         }
-        
+
         .hero-content {
           text-align: center;
           align-items: center; /* Center all flex children including CTA */
         }
-        
+
         .hero-cta {
           justify-content: center;
           flex-direction: column;
           gap: 0.75rem;
           width: 100%; /* Full width to ensure centering */
         }
-        
+
         .hero-cta .btn-primary,
         .hero-cta .btn-outline {
           width: 100%;
           max-width: 320px;
         }
-        
+
         /* Fix video wrapper on mobile */
         .video-wrapper {
           max-width: 100%;
           margin: 0 auto;
           padding: 0;
         }
-        
+
         .hero-3d-wrapper {
           width: 100%;
           display: flex;
@@ -897,7 +906,7 @@
           align-items: center;
           padding: 0;
         }
-        
+
         .model-preview-section {
           width: 100%;
           max-width: 100%;
@@ -907,69 +916,74 @@
           padding: 0;
           margin: 0;
         }
-        
+
         .model-viewer-container {
           max-width: 100%;
           height: 400px;
         }
-        
+
         .section {
           padding: 3rem 0;
         }
-        
+
         .section-title {
           font-size: 1.75rem;
         }
       }
-      
+
       /* Small Mobile Devices */
       @media (max-width: 480px) {
         .hero-section {
-          padding: 60px 1rem 40px;
+          padding: 60px 0 40px; /* No side padding */
         }
-        
+
         .hero-container {
           gap: 1.5rem;
+          padding: 0 1rem; /* Container handles padding instead */
         }
-        
+
         .video-wrapper {
           max-width: 100%;
           margin: 0 auto; /* Keep auto for horizontal centering */
           padding: 0;
           border-radius: 12px;
         }
-        
+
         .preview-video {
           border-radius: 12px;
         }
-        
+
         .model-viewer-container {
           height: 300px;
         }
-        
+
         .section {
           padding: 2.5rem 0;
         }
-        
+
         .hero-title {
           font-size: 2rem;
         }
-        
+
         .hero-subtitle {
           font-size: 0.95rem;
         }
       }
-      
+
       /* Extra Small Devices */
       @media (max-width: 375px) {
+        .hero-container {
+          padding: 0 0.75rem; /* Tighter padding for small screens */
+        }
+
         .video-wrapper {
           border-radius: 8px;
         }
-        
+
         .hero-cta {
           gap: 0.5rem;
         }
-        
+
         .btn-primary,
         .btn-outline {
           font-size: 0.9rem;
@@ -990,9 +1004,21 @@
           Links use .link-underline-center for animated underline from center.
         -->
         <div class="nav-links space-md-x-6 space-lg-x-8">
-          <a href="index.html" class="nav-link link-underline-center active text-sm lg:text-base">Главная</a>
-          <a href="catalog.html" class="nav-link link-underline-center text-sm lg:text-base">Каталог</a>
-          <a href="configurator.html" class="nav-link link-underline-center text-sm lg:text-base">Кастомизация</a>
+          <a
+            href="index.html"
+            class="nav-link link-underline-center active text-sm lg:text-base"
+            >Главная</a
+          >
+          <a
+            href="catalog.html"
+            class="nav-link link-underline-center text-sm lg:text-base"
+            >Каталог</a
+          >
+          <a
+            href="configurator.html"
+            class="nav-link link-underline-center text-sm lg:text-base"
+            >Кастомизация</a
+          >
         </div>
       </div>
     </nav>
@@ -1021,6 +1047,7 @@
                 <source src="images/tshirtgif.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
+            </div>
           </div>
         </div>
       </div>
