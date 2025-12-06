@@ -810,34 +810,120 @@
         }
       }
 
+      /* Mobile Responsiveness - Tablets and Below */
       @media (max-width: 768px) {
         .nav-links {
           display: none;
         }
+        
         .feature-grid,
         .product-grid {
           grid-template-columns: 1fr;
           gap: 1.25rem;
         }
+        
         .hero-container {
           grid-template-columns: 1fr;
-          gap: 3rem;
+          gap: 2rem;
         }
+        
         .hero-text {
           max-width: 100%;
         }
+        
         .hero-content {
           text-align: center;
         }
+        
         .hero-cta {
           justify-content: center;
+          flex-direction: column;
+          gap: 0.75rem;
         }
+        
+        .hero-cta .btn-primary,
+        .hero-cta .btn-outline {
+          width: 100%;
+          max-width: 320px;
+        }
+        
+        /* Fix video wrapper on mobile */
+        .video-wrapper {
+          max-width: 100%;
+          margin: 0 auto;
+          padding: 0 1rem;
+        }
+        
+        .hero-3d-wrapper {
+          width: 100%;
+        }
+        
         .model-viewer-container {
           max-width: 100%;
-          height: 500px;
+          height: 400px;
         }
+        
         .section {
-          padding: 4rem 0;
+          padding: 3rem 0;
+        }
+        
+        .section-title {
+          font-size: 1.75rem;
+        }
+      }
+      
+      /* Small Mobile Devices */
+      @media (max-width: 480px) {
+        .hero-section {
+          padding: 60px 1rem 40px;
+        }
+        
+        .hero-container {
+          gap: 1.5rem;
+        }
+        
+        .video-wrapper {
+          max-width: 100%;
+          margin: 0;
+          padding: 0;
+          border-radius: 12px;
+        }
+        
+        .preview-video {
+          border-radius: 12px;
+        }
+        
+        .model-viewer-container {
+          height: 300px;
+        }
+        
+        .section {
+          padding: 2.5rem 0;
+        }
+        
+        .hero-title {
+          font-size: 2rem;
+        }
+        
+        .hero-subtitle {
+          font-size: 0.95rem;
+        }
+      }
+      
+      /* Extra Small Devices */
+      @media (max-width: 375px) {
+        .video-wrapper {
+          border-radius: 8px;
+        }
+        
+        .hero-cta {
+          gap: 0.5rem;
+        }
+        
+        .btn-primary,
+        .btn-outline {
+          font-size: 0.9rem;
+          padding: 0.8rem 1.4rem;
         }
       }
     </style>

@@ -154,47 +154,72 @@
     grid-template-columns: 1fr;
     gap: 1.5rem;
     padding: 0 1rem;
+    max-width: 100%;
+  }
+
+  .product-card {
+    max-width: 100%;
+    margin: 0 auto;
   }
 
   .product-card__image-container {
-    height: 240px;
+    height: 280px;
     padding: 1rem;
   }
 
+  .product-card__image {
+    transform: scale(0.9);
+  }
+
+  .product-card:hover .product-card__image {
+    transform: scale(0.95);
+  }
+
   .product-card__title {
-    font-size: 1.15rem;
+    font-size: 1.2rem;
   }
 
   .product-card__price {
-    font-size: 1.35rem;
+    font-size: 1.4rem;
   }
 
   .customize-btn {
-    padding: 0.75rem 1.25rem;
-    font-size: 0.95rem;
+    padding: 0.85rem 1.5rem;
+    font-size: 1rem;
   }
 }
-/* Small mobile */
+
+/* Small mobile - optimized for 375px-480px */
 @media (max-width: 480px) {
   .product-grid {
     gap: 1rem;
+    padding: 0 0.75rem;
+  }
+
+  .product-card {
+    border-radius: 16px;
   }
 
   .product-card__image-container {
-    height: 200px;
+    height: 220px;
     padding: 0.75rem;
   }
 
   .product-card__content {
-    padding: 1.25rem;
+    padding: 1.25rem 1rem;
   }
 
   .product-card__title {
-    font-size: 1.05rem;
+    font-size: 1.1rem;
+  }
+
+  .product-card__description {
+    font-size: 0.9rem;
   }
 
   .product-card__price {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
   }
 
   .product-card__actions {
@@ -204,7 +229,37 @@
 
   .customize-btn {
     width: 100%;
+    padding: 0.9rem 1rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Extra small mobile - 320px-375px */
+@media (max-width: 375px) {
+  .product-grid {
+    padding: 0 0.5rem;
+  }
+
+  .product-card__image-container {
+    height: 200px;
+    padding: 0.5rem;
+  }
+
+  .product-card__content {
+    padding: 1rem 0.875rem;
+  }
+
+  .product-card__title {
+    font-size: 1.05rem;
+  }
+
+  .product-card__price {
+    font-size: 1.2rem;
+  }
+
+  .customize-btn {
     padding: 0.85rem 1rem;
+    font-size: 0.9rem;
   }
 }
 
@@ -213,6 +268,7 @@
   .product-grid {
     max-width: 800px;
     gap: 1.75rem;
+    padding: 0 1.5rem;
   }
 
   .product-card__image-container {
