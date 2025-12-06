@@ -158,9 +158,9 @@
         /* NO background or box effects - only underline */
       }
 
-      /* Purple hover color - smooth transition, no movement, no box */
+      /* Hover color - change only on mouse hover */
       .nav-link:hover {
-        color: #c084fc; /* purple-400 for better contrast */
+        color: #2596be;
       }
 
       /* Active link: only text styling, no background */
@@ -180,7 +180,8 @@
         height: 2px;
         width: 70%;
         border-radius: 2px;
-        background: linear-gradient(90deg, transparent, #c084fc, transparent);
+        /* underline color will appear on hover */
+        background: linear-gradient(90deg, transparent, #2596be, transparent);
         transition: transform 380ms cubic-bezier(0.4, 0, 0.2, 1);
         pointer-events: none;
       }
@@ -192,6 +193,7 @@
       /* Active state shows persistent underline */
       .link-underline-center.active::after {
         transform: translateX(-50%) scaleX(1);
+        /* keep active underline visible but in white for contrast */
         background: linear-gradient(90deg, transparent, #ffffff, transparent);
       }
 
