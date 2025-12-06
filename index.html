@@ -295,6 +295,8 @@
         display: flex;
         gap: 1rem;
         flex-wrap: wrap;
+        justify-content: center; /* Center buttons on all screen sizes */
+        align-items: center;
       }
 
       .hero-3d-wrapper {
@@ -587,7 +589,7 @@
 
       .video-wrapper {
         max-width: 420px; /* Reduced from 600px for better balance with text */
-        margin: 0 auto 0 6rem; /* Shifted further right by 6rem (96px) */
+        margin: 0 auto; /* Centered on all devices */
         border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
@@ -807,6 +809,36 @@
           flex-direction: column;
           gap: 16px;
           text-align: center;
+        }
+      }
+
+      /* Tablet Devices (Portrait and Landscape) */
+      @media (min-width: 769px) and (max-width: 1024px) {
+        .hero-cta {
+          justify-content: center;
+          gap: 1rem;
+        }
+        
+        .hero-cta .btn-primary,
+        .hero-cta .btn-outline {
+          min-width: 180px;
+        }
+      }
+      
+      /* Landscape Mode for Tablets and Mobile */
+      @media (max-height: 600px) and (orientation: landscape) {
+        .hero-section {
+          padding: 40px 2rem;
+        }
+        
+        .hero-cta {
+          justify-content: center;
+          flex-direction: row;
+          gap: 1rem;
+        }
+        
+        .hero-container {
+          gap: 1.5rem;
         }
       }
 
